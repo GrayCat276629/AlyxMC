@@ -7,3 +7,8 @@ Hello everyone, Alyx Launcher will only be released as a test version until June
 
 - ⚠ My Alyx Launcher is not for cheating and hacking.
 - 🛠 I fix bugs only when I find them, if you find them, you can contact Discord, but I will send the link before the test.
+
+# Versions:
+0 - Test version | First: 0100 | t-100 | end: t-950
+1 - Beta version | First: 1100 | b-100 | end: b-950
+2 - Full version | First: 2100 | f-100 | end: There won't be
