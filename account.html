@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <img src="https://uploads.onecompiler.io/445ex5aav/44qwj8sz8/AlyxWebIcon.jpg" width="20" height="20" class="AlyxWebIcon">
+    <h5>Alyx Web | Account</h5>
+    <link rel="icon" href="https://uploads.onecompiler.io/445ex5aav/44qwj8sz8/AlyxWebIcon.jpg">
+  <nav class="nav-button">
+    <a href="index.html" class="Home">Home</a>
+    <a href="texturepack.html" class="Texture Pack">Texture Pack</a>
+    <a href="mods.html" class="Mods">Mods</a>
+    <a href="download.html" class="Download">Download</a>
+    <a href="about.html" class="About">About</a>
+    <a href="mcserver.html" class="Server List">Server List</a>
+    <a href="account.html" class="Account">Account</a>
+    <a href="fixbug.html" class="Fix Bug">Fix Bug</a> 
+  </nav>
+</header>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <p>Welcome!</p>
+<div class="container">
+
+    <h1 class="welcome">Welcome, choose your path.</h1>
+
+    <!-- Login / Register Buttons -->
+    <div class="btn-group" id="authButtons">
+        <button class="btn" id="showLoginBtn">Login</button>
+        <button class="btn" id="showRegisterBtn">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-box" id="loginForm">
+        <div class="form-title">Sign In</div>
+        <input type="email" id="loginEmail" placeholder="Enter Email">
+        <input type="password" id="loginPassword" placeholder="Enter Password">
+        <button class="btn" id="loginBtn">Sign In</button>
+        <button class="btn btn-github" id="githubLoginBtn">Sign in with GitHub</button>
+        <button class="btn btn-cancel" id="cancelLoginBtn">Cancel</button>
+    </div>
+
+    <!-- Register Form -->
+    <div class="form-box" id="registerForm">
+        <div class="form-title">Create Account</div>
+        <input type="email" id="registerEmail" placeholder="Enter Email">
+        <input type="password" id="registerPassword" placeholder="Enter Password">
+        <button class="btn" id="registerBtn">Register</button>
+        <button class="btn btn-github" id="githubRegisterBtn">Sign up with GitHub</button>
+        <button class="btn btn-cancel" id="cancelRegisterBtn">Cancel</button>
+    </div>
+
+    <!-- Logged In State -->
+    <div class="logged-in" id="loggedInState">
+        <p>Have a problem? Contact us:</p>
+        <div class="links">
+            <a href="https://discord.gg/DqHEWzvEXu" target="_blank">Discord</a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-analytics-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-auth-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore-compat.js">
+</script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJxZwopNuuMJUYWbP-dU5MDm1EkiYwza0",
+        authDomain: "alyxmc-e982f.firebaseapp.com",
+        projectId: "alyxmc-e982f",
+        storageBucket: "alyxmc-e982f.firebasestorage.app",
+        messagingSenderId: "870570481271",
+        appId: "1:870570481271:web:dd512f6fe37897ec011872",
+        measurementId: "G-S38XKLV4QH"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GithubAuthProvider();
+
+    // DOM Elements
+    const authButtons = document.getElementById('authButtons');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loggedInState = document.getElementById('loggedInState');
+
+    const showLoginBtn = document.getElementById('showLoginBtn');
+    const showRegisterBtn = document.getElementById('showRegisterBtn');
+    const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+    const cancelRegisterBtn = document.getElementById('cancelRegisterBtn');
+
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const githubLoginBtn = document.getElementById('githubLoginBtn');
+    const githubRegisterBtn = document.getElementById('githubRegisterBtn');
+
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const registerEmail = document.getElementById('registerEmail');
+    const registerPassword = document.getElementById('registerPassword');
+
+    // Show Login Form
+    showLoginBtn.addEventListener('click', () => {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        authButtons.style.display = 'none';
+    });
+
+    // Show Register Form
+    showRegisterBtn.addEventListener('click', () => {
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+        authButtons.style.display = 'none';
+    });
+
+    // Cancel Login
+    cancelLoginBtn.addEventListener('click', () => {
+        loginForm.classList.remove('active');
+        authButtons.style.display = 'flex';
+        loginEmail.value = '';
+        loginPassword.value = '';
+    });
+
+    // Cancel Register
+    cancelRegisterBtn.addEventListener('click', () => {
+        registerForm.classList.remove('active');
+        authButtons.style.display = 'flex';
+        registerEmail.value = '';
+        registerPassword.value = '';
+    });
+
+    // Login with Email/Password
+    loginBtn.addEventListener('click', () => {
+        const email = loginEmail.value;
+        const password = loginPassword.value;
+
+        if (!email || !password) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                alert('Login successful');
+                showLoggedInState();
+            })
+            .catch((error) => {
+                alert('Error: ' + error.message);
+            });
+    });
+
+    // Register with Email/Password
+    registerBtn.addEventListener('click', () => {
+        const email = registerEmail.value;
+        const password = registerPassword.value;
+
+        if (!email || !password) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then(() => {
+                alert('Registration successful');
+                showLoggedInState();
+            })
+            .catch((error) => {
+                alert('Error: ' + error.message);
+            });
+    });
+
+    // Login with GitHub
+    function loginWithGitHub() {
+        auth.signInWithPopup(provider)
+            .then(() => {
+                alert('GitHub login successful');
+                showLoggedInState();
+            })
+            .catch((error) => {
+                alert('Error: ' + error.message);
+            });
+    }
+
+    githubLoginBtn.addEventListener('click', loginWithGitHub);
+    githubRegisterBtn.addEventListener('click', loginWithGitHub);
+
+    // Check auth state
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            showLoggedInState();
+        } else {
+            showAuthState();
+        }
+    });
+
+    function showLoggedInState() {
+        loginForm.classList.remove('active');
+        registerForm.classList.remove('active');
+        authButtons.style.display = 'none';
+        loggedInState.classList.add('active');
+    }
+
+    function showAuthState() {
+        loggedInState.classList.remove('active');
+        authButtons.style.display = 'flex';
+        loginForm.classList.remove('active');
+        registerForm.classList.remove('active');
+        loginEmail.value = '';
+        loginPassword.value = '';
+        registerEmail.value = '';
+        registerPassword.value = '';
+    }
+</script>
+</body>
+</html> 

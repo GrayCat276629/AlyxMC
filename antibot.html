@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <title>Alyx Web - Security</title>
+    <link rel="icon" href="https://uploads.onecompiler.io/445ex5aav/44qwj8sz8/AlyxWebIcon.jpg">
+    <style>
+        .step {
+            background: #111;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+        .step.active {
+            border-color: #4CAF50;
+        }
+        .step-title {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+        input, button {
+            margin: 8px 0;
+        }
+        .email-input {
+            width: 300px;
+            background: #2a2a2a;
+            border: 1px solid #555;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            background: #222;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px auto;
+            width: fit-content;
+        }
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            border: 1px solid #555;
+            background-size: 300px 300px;
+            transition: 0.1s;
+        }
+        .puzzle-piece.selected {
+            border: 3px solid #4CAF50;
+            transform: scale(0.98);
+        }
+        .code-input {
+            width: 200px;
+            background: #2a2a2a;
+            border: 1px solid #555;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 5px;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #1a3a1a;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .error {
+            background: #3a1a1a;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        #puzzleStatus {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 600px; margin: 50px auto; text-align: center;">
+        <h1>Checkify</h1>
+        <p>Please complete the verification to access Alyx MC</p>
+
+        <div id="step1" class="step active">
+            <div class="step-title">Step 1: Enter Email</div>
+            <input type="email" id="emailInput" class="email-input" placeholder="example@domain.com">
+            <button id="nextStep1">Next</button>
+        </div>
+
+        <div id="step2" class="step" style="display:none">
+            <div class="step-title">Step 2: Assemble the Puzzle</div>
+            <p>Click on a piece, then on another to swap them. Assemble the image!</p>
+            <div class="puzzle-container" id="puzzleGrid"></div>
+            <button id="checkPuzzle" disabled>Check Puzzle</button>
+            <div id="puzzleStatus" class="status"></div>
+        </div>
+
+        <div id="step3" class="step" style="display:none">
+            <div class="step-title">Step 3: Verify by Email</div>
+            <p>Code sent to <span id="userEmail"></span></p>
+            <input type="text" id="codeInput" class="code-input" maxlength="6" placeholder="123456">
+            <button id="verifyCode">Verify</button>
+            <button id="resendCode">Resend Code</button>
+            <div id="codeStatus" class="status"></div>
+        </div>
+
+        <div id="finalStatus" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        const PUZZLE_IMAGE_URL = 'puzzle.jpg';
+
+        let currentEmail = '';
+        let currentCode = '';
+        let puzzlePieces = [];
+        let selectedIndex = null;
+        let imageLoaded = false;
+
+        // ========== ВСТАВЬ СВОЙ USER ID ==========
+        emailjs.init({
+            publicKey: "7ZRY0F3nXXybhc24B"
+        });
+
+        document.getElementById('nextStep1').onclick = () => {
+            const email = document.getElementById('emailInput').value;
+            const emailRegex = /^[^\s@]+@([^\s@]+\.)+(ru|com|org|net|ua|by|kz)$/i;
+            
+            if (!emailRegex.test(email)) {
+                alert('Invalid email format! Example: name@domain.com');
+                return;
+            }
+            
+            currentEmail = email;
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            initPuzzle();
+        };
+        
+        function initPuzzle() {
+            let indices = [0,1,2,3,4,5,6,7,8];
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            puzzlePieces = indices;
+            renderPuzzleGrid();
+        }
+        
+        function renderPuzzleGrid() {
+            const grid = document.getElementById('puzzleGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const pieceIndex = puzzlePieces[i];
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                if (selectedIndex === i) piece.classList.add('selected');
+                const row = Math.floor(pieceIndex / 3);
+                const col = pieceIndex % 3;
+                piece.style.backgroundImage = `url('${PUZZLE_IMAGE_URL}')`;
+                piece.style.backgroundSize = '300px 300px';
+                piece.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
+                piece.onclick = (function(idx) { return function() { selectPiece(idx); }; })(i);
+                grid.appendChild(piece);
+            }
+        }
+        
+        function selectPiece(clickedIdx) {
+            if (selectedIndex === null) {
+                selectedIndex = clickedIdx;
+                renderPuzzleGrid();
+            } else if (selectedIndex === clickedIdx) {
+                selectedIndex = null;
+                renderPuzzleGrid();
+            } else {
+                [puzzlePieces[selectedIndex], puzzlePieces[clickedIdx]] = 
+                [puzzlePieces[clickedIdx], puzzlePieces[selectedIndex]];
+                selectedIndex = null;
+                renderPuzzleGrid();
+                checkIfCompleted();
+            }
+        }
+        
+        function checkIfCompleted() {
+            const isComplete = puzzlePieces.every((val, idx) => val === idx);
+            const checkBtn = document.getElementById('checkPuzzle');
+            checkBtn.disabled = !isComplete;
+            
+            const statusDiv = document.getElementById('puzzleStatus');
+            if (isComplete) {
+                statusDiv.innerHTML = '<div class="success">Puzzle completed! Click "Check Puzzle".</div>';
+            } else {
+                statusDiv.innerHTML = '';
+            }
+        }
+        
+        document.getElementById('checkPuzzle').onclick = () => {
+            if (puzzlePieces.every((val, idx) => val === idx)) {
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+                document.getElementById('userEmail').textContent = currentEmail;
+                sendCodeToEmail();
+            } else {
+                alert('Puzzle not completed! Please rearrange the pieces to form a complete image.');
+            }
+        };
+        
+        async function sendCodeToEmail() {
+            currentCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            try {
+                await emailjs.send("service_5reqyiw", "template_y9saohd", {
+                    to_email: currentEmail,
+                    code: currentCode
+                });
+
+                document.getElementById('codeStatus').innerHTML = '<div class="success">Code sent!</div>';
+            } catch (error) {
+                console.error(error);
+                document.getElementById('codeStatus').innerHTML = '<div class="error">Failed to send.</div>';
+            }
+        }
+        
+        document.getElementById('resendCode').onclick = () => {
+            sendCodeToEmail();
+            document.getElementById('codeStatus').innerHTML = '<div class="success">Code resent!</div>';
+        };
+        
+        document.getElementById('verifyCode').onclick = () => {
+            const userCode = document.getElementById('codeInput').value;
+            if (userCode === currentCode) {
+                document.getElementById('codeStatus').innerHTML = '<div class="success">Access granted!</div>';
+                document.getElementById('finalStatus').innerHTML = `
+                    <div class="success">
+                        Access granted!
+                        Now you have access to Alyx MC
+                        Redirecting in 2 seconds...
+                    </div>
+                `;
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            } else {
+                document.getElementById('codeStatus').innerHTML = '<div class="error">Wrong code! Please try again.</div>';
+            }
+        };
+    </script>
+</body>
+</html>

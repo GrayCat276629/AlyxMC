@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alyx Web - Вход</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div id="login-status">Загрузка...</div>
+    <button id="github-btn" style="display:none">Войти через GitHub</button>
+    <button id="logout-btn" style="display:none">Выйти</button>
+    <div id="user-info" style="display:none"></div>
+
+    <script>
+        // Твои настройки из Firebase Console (Project settings → General → Your apps)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJxZwopNuuMJUYWbP-dU5MDm1EkiYwza0",
+            authDomain: "alyxmc-e982f.firebaseapp.com",
+            projectId: "alyxmc-e982f",
+            // ... остальные поля
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GithubAuthProvider();
+
+        // Отслеживаем состояние входа
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Пользователь вошел
+                document.getElementById('login-status').style.display = 'none';
+                document.getElementById('github-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'inline-block';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('user-info').innerHTML = `
+                    <img src="${user.photoURL}" width="50" style="border-radius:50%">
+                    <h3>${user.displayName}</h3>
+                    <p>Email: ${user.email || 'Не указан'}</p>
+                    <p>GitHub: <a href="${user.providerData[0].profileURL}" target="_blank">@${user.providerData[0].screenName}</a></p>
+                `;
+                console.log('UID:', user.uid);
+            } else {
+                // Пользователь не вошел
+                document.getElementById('login-status').innerHTML = 'Не авторизован';
+                document.getElementById('github-btn').style.display = 'inline-block';
+                document.getElementById('logout-btn').style.display = 'none';
+                document.getElementById('user-info').style.display = 'none';
+            }
+        });
+
+        // Вход через GitHub
+        document.getElementById('github-btn').onclick = () => {
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    console.log('Успешно!', result.user);
+                })
+                .catch((error) => {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка: ' + error.message);
+                });
+        };
+
+        // Выход
+        document.getElementById('logout-btn').onclick = () => {
+            auth.signOut().then(() => {
+                console.log('Вышел из аккаунта');
+            });
+        };
+    </script>
+</body>
+</html>

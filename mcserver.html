@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alyx Launcher — Server List</title>
+    <link rel="icon" href="https://uploads.onecompiler.io/445ex5aav/44qwj8sz8/AlyxWebIcon.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .sub {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
+            border-left: 3px solid #550000;
+            padding-left: 12px;
+        }
+
+        .filter-bar {
+            background-color: #111111;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .filter-select {
+            background-color: #000000;
+            border: 1px solid #32324e;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .search-input {
+            background-color: #000000;
+            border: 1px solid #FF0000;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            width: 200px;
+        }
+
+        .search-input::placeholder {
+            color: #666;
+        }
+
+        .filter-clear {
+            background-color: #555555;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .filter-clear:hover {
+            background-color: #222222;
+        }
+
+        .servers-count {
+            font-size: 12px;
+            color: #6bcf7f;
+            margin-left: auto;
+        }
+
+        .server-card {
+            background-color: #000000;
+            margin-bottom: 12px;
+            padding: 14px 18px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #555555;
+        }
+
+        .server-card:hover {
+            background-color: #000000;
+        }
+
+        .server-info {
+            flex: 2;
+        }
+
+        .server-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .server-details {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .server-address {
+            font-family: 'Consolas', monospace;
+        }
+
+        .server-version {
+            color: #b392f0;
+        }
+
+        .copy-btn {
+            background-color: #333333;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .copy-btn:hover {
+            background-color: #000000;
+        }
+
+        .copy-btn:active {
+            background-color: #222222;
+        }
+
+        .copy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .online {
+            color: #6bcf7f;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .offline {
+            color: #cf6b6b;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            height: 1px;
+            background-color: #32324e;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            background-color: #252540;
+            border-radius: 6px;
+        }
+
+        .footer-note {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2e4a75;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            z-index: 999;
+            animation: fadeOut 2s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        h5 {
+            font-family: "Segoe UI", Tahoma, monospace;
+        }
+        h5 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+            margin: 0;
+        }
+        p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #cccccc;
+        }
+        a {
+            background-color: #333333;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+        a:hover {
+            background-color: #000000;
+        }
+        a:active {
+            background-color: #222222;
+        }
+        a:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://uploads.onecompiler.io/445ex5aav/44qwj8sz8/AlyxWebIcon.jpg" width="20" height="20" class="AlyxWebIcon">
+    <h5>Alyx Web | Server List</h5>
+    <nav class="nav-button">
+    <a href="index.html" class="Home">Home</a>
+    <a href="texturepack.html" class="Texture Pack">Texture Pack</a>
+    <a href="mods.html" class="Mods">Mods</a>
+    <a href="download.html" class="Download">Download</a>
+    <a href="about.html" class="About">About</a>
+    <a href="mcserver.html" class="Server List">Server List</a>
+    <a href="account.html" class="Account">Account</a>
+    <a href="fixbug.html" class="Fix Bug">Fix Bug</a> 
+    </header>
+  </nav>
+    <div class="container">
+        <div class="sub">Click "Copy IP" — then paste in Minecraft (Multiplayer → Direct Connect or Add Server)</div>
+
+        <div class="filter-bar">
+            <span class="filter-label">Version:</span>
+            <select id="versionFilter" class="filter-select">
+                <option value="all">All versions</option>
+            </select>
+
+            <span class="filter-label">Search:</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Server name or IP...">
+
+            <button id="clearFilters" class="filter-clear">Reset</button>
+            <span id="serversCount" class="servers-count">Servers: 0</span>
+        </div>
+
+        <div id="server-list"></div>
+        <hr />
+        <div class="footer-note">📋 Copies IP:port to clipboard</div>
+    </div>
+
+    <script>
+        // ============================================
+        // MINECRAFT VERSIONS (1.4.2 — 26.1.2)
+        // ============================================
+        const minecraftVersions = [
+            "1.8-26.1.2", "1.7.10-26.1.2", "1.21.4-1.21.10", "1.12.2-1.21.11", "1.16.1-1.21.11", "1.1-26.1.2",
+            "1.21.6-26.1.2", "1.21.8-26.2", "1.8.8-1.21.10", "1.21.6-1.21.11",
+            "1.4.2", "1.4.4", "1.4.5", "1.4.6", "1.4.7",
+            "1.5.1", "1.5.2",
+            "1.6.1", "1.6.2", "1.6.4",
+            "1.7.2", "1.7.4", "1.7.5", "1.7.6", "1.7.6", "1.7.7", "1.7.8", "1.7.9", "1.7.10",
+            "1.8", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8", "1.8.9",
+            "1.9", "1.9.1", "1.9.2", "1.9.3", "1.9.4",
+            "1.10", "1.10.1", "1.10.2",
+            "1.11", "1.11.1", "1.11.2",
+            "1.12", "1.12.1", "1.12.2",
+            "1.13", "1.13.1", "1.13.2",
+            "1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4",
+            "1.15", "1.15.1", "1.15.2",
+            "1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5",
+            "1.17", "1.17.1",
+            "1.18", "1.18.1", "1.18.2",
+            "1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4",
+            "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6",
+            "1.21", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11",
+            "26.1", "26.1.1", "26.1.2"
+        ];
+
+        // ============================================
+        // YOUR SERVERS (add them here)
+        // ============================================
+        const servers = [
+            // Example: { name: "Server Name", ip: "play.example.com", port: 25565, version: "1.16.5", online: true }
+            { name: "FunnyMC", ip: "funnymc.net", port: 25565, version: "1.8-26.1.2", online: true },
+            { name: "AresMine", ip: "hot.aresmine.me", port: 25565, version: "1.21.11", online: true },
+            { name: "MineLandy", ip: "mc.minelandy.com", port: 25565, version: "1.7.10-26.1.2", online: true },
+            { name: "DiamongWorld", ip: "hmb.diamondworld.pro", port: 25565, version: "1.21.4-1.21.10", online: true },
+            { name: "VayLand", ip: "mc.vayland.net", port: 25565, version: "1.12.2-1.21.11", online: true },
+            { name: "VardenDrop", ip: "VardenDrop.aternos.me", port: 11734, version: "1.21.11", online: false },
+            { name: "Beehive", ip: "mc.beehiveprv.club", port: 25565, version: "1.16.1-1.21.11", online: true },
+            { name: "HoneyLand", ip: "play.honeyland.fun", port: 25565, version: "1.1-26.1.2", online: true },
+            { name: "Envion", ip: "mc.envion.fun", port: 25565, version: "1.21.11", online: true },
+            { name: "Matix", ip: "hot.matix.gg", port: 25565, version: "1.21.6-26.1.2", online: true },
+            { name: "Cosmoplex", ip: "cosmoplex.ru", port: 25565, version: "1.21.8-26.2", online: true },
+            { name: "GrayWorld", ip: "grayworld.pro", port: 25565, version: "1.8.8-1.21.10", online: true },
+            { name: "ShyMiners", ip: "eu.shyminers.fun", port: 25565, version: "1.21.8-1.21.11", online: true }
+        ];
+
+        function populateVersionFilter() {
+            const select = document.getElementById('versionFilter');
+            minecraftVersions.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.textContent = v;
+                select.appendChild(opt);
+            });
+        }
+
+        function showNotification(msg) {
+            const old = document.querySelector('.toast-notification');
+            if (old) old.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification(`Copied: ${text}`);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showNotification(`Copied: ${text}`);
+            });
+        }
+
+        function renderServerList() {
+            const container = document.getElementById('server-list');
+            const version = document.getElementById('versionFilter').value;
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            let filtered = servers.filter(s => {
+                if (version !== 'all' && s.version !== version) return false;
+                if (query && !s.name.toLowerCase().includes(query) && !s.ip.toLowerCase().includes(query)) return false;
+                return true;
+            });
+
+            document.getElementById('serversCount').textContent = `Servers: ${filtered.length}`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-message"> ×  Nothing found</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            filtered.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'server-card';
+
+                const info = document.createElement('div');
+                info.className = 'server-info';
+                info.innerHTML = `
+                    <div class="server-name">${s.name}</div>
+                    <div class="server-details">
+                        <span class="server-address">${s.ip}:${s.port}</span>
+                        <span class="server-version">⚡ ${s.version}</span>
+                    </div>
+                `;
+
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'status';
+                statusDiv.innerHTML = `<span class="${s.online ? 'online' : 'offline'}">${s.online ? '● Online' : '● Offline'}</span>`;
+
+                const btn = document.createElement('button');
+                btn.textContent = 'Copy IP';
+                btn.className = 'copy-btn';
+                if (!s.online) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                } else {
+                    btn.onclick = () => copyToClipboard(`${s.ip}:${s.port}`);
+                }
+
+                card.appendChild(info);
+                card.appendChild(statusDiv);
+                card.appendChild(btn);
+                container.appendChild(card);
+            });
+        }
+
+        function init() {
+            populateVersionFilter();
+            renderServerList();
+            document.getElementById('versionFilter').addEventListener('change', renderServerList);
+            document.getElementById('searchInput').addEventListener('input', renderServerList);
+            document.getElementById('clearFilters').addEventListener('click', () => {
+                document.getElementById('versionFilter').value = 'all';
+                document.getElementById('searchInput').value = '';
+                renderServerList();
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
