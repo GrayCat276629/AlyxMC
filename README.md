@@ -1,5 +1,9 @@
 Hello everyone, Alyx Launcher will only be released as a test version until June 1, and I will make the full version soon (Because I myself don’t know when it will be released), see you.
 
+# New site for Alyx.
+This is site but beta mode.
+For the full version, I would add: builds, shaders, etc.
+
 # Why am I making a test version?
 > 1. I don’t recommend making the full version, to be honest, I start with making a test version and then some kind of beta, and then the full one.
 > > 1. If I make a full version at once, I could be wrong forever. So I decided to make a test version.
