@@ -1,11 +1,5 @@
-// ============================================================
-// КОНСТАНТЫ
-// ============================================================
 const PROJECT_TYPE = 'mod';
 
-// ============================================================
-// ЗАГРУЗКА МОДОВ
-// ============================================================
 async function loadMods() {
     const loader = document.getElementById('loader').value;
     const version = document.getElementById('mcVersion').value;
@@ -37,12 +31,12 @@ async function loadMods() {
         let url = `https://api.modrinth.com/v2/search?facets=${encodeURIComponent(JSON.stringify(facets))}&limit=50`;
         if (search) url += `&query=${encodeURIComponent(search)}`;
 
-        console.log('🔍 Запрос:', url);
+        console.log('Search:', url);
         const response = await fetch(url);
         const data = await response.json();
 
-        console.log('📦 Ответ:', data);
-        console.log('📦 Количество модов:', data.hits ? data.hits.length : 0);
+        console.log('Anwser:', data);
+        console.log('Mods:', data.hits ? data.hits.length : 0);
 
         if (data.hits && data.hits.length > 0) {
             renderMods(data.hits);
@@ -51,13 +45,9 @@ async function loadMods() {
         }
     } catch (error) {
         resultsDiv.innerHTML = `<p>Error: ${error.message}</p>`;
-        console.error('❌ Ошибка:', error);
+        console.error('Error:', error);
     }
 }
-
-// ============================================================
-// ОТРИСОВКА КАРТОЧЕК
-// ============================================================
 function renderMods(mods) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
@@ -94,10 +84,6 @@ function renderMods(mods) {
         resultsDiv.appendChild(card);
     });
 }
-
-// ============================================================
-// ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
-// ============================================================
 document.addEventListener('DOMContentLoaded', function() {
     loadMods();
 
