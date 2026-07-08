@@ -277,7 +277,7 @@
     <a href="about.html" class="About">About</a>
     <a href="mcserver.html" class="Server List">Server List</a>
     <a href="account.html" class="Account">Account</a>
-    <a href="fixbug.html" class="Fix Bug">Fix Bug</a> 
+    <a href="fixbug.html" class="Fix Bug">Fix Bug</a>
     </header>
   </nav>
     <div class="container">
@@ -303,11 +303,11 @@
 
     <script>
         // ============================================
-        // MINECRAFT VERSIONS (1.4.2 — 26.1.2)
+        // MINECRAFT VERSIONS (1.4.2 — 26.2)
         // ============================================
         const minecraftVersions = [
             "1.8-26.1.2", "1.7.10-26.1.2", "1.21.4-1.21.10", "1.12.2-1.21.11", "1.16.1-1.21.11", "1.1-26.1.2",
-            "1.21.6-26.1.2", "1.21.8-26.2", "1.8.8-1.21.10", "1.21.6-1.21.11",
+            "1.21.6-26.1.2", "1.21.8-26.2", "1.8.8-1.21.10", "1.21.6-1.21.11", "1.8-26.2",
             "1.4.2", "1.4.4", "1.4.5", "1.4.6", "1.4.7",
             "1.5.1", "1.5.2",
             "1.6.1", "1.6.2", "1.6.4",
@@ -326,7 +326,7 @@
             "1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4",
             "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6",
             "1.21", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11",
-            "26.1", "26.1.1", "26.1.2"
+            "26.1", "26.1.1", "26.1.2", "26.2"
         ];
 
         // ============================================
@@ -334,19 +334,21 @@
         // ============================================
         const servers = [
             // Example: { name: "Server Name", ip: "play.example.com", port: 25565, version: "1.16.5", online: true }
-            { name: "FunnyMC", ip: "funnymc.net", port: 25565, version: "1.8-26.1.2", online: true },
+            { name: "FunnyMC", ip: "funnymc.net", port: 25565, version: "1.8-26.2", online: true },
+            { name: "CheatMine", ip: "cheatmine.net", port: 25565, version: "1.8-26.2", online: true },
             { name: "AresMine", ip: "hot.aresmine.me", port: 25565, version: "1.21.11", online: true },
-            { name: "MineLandy", ip: "mc.minelandy.com", port: 25565, version: "1.7.10-26.1.2", online: true },
+            { name: "MineLandy", ip: "mc.minelandy.com", port: 25565, version: "1.7.10-26.2", online: true },
             { name: "DiamongWorld", ip: "hmb.diamondworld.pro", port: 25565, version: "1.21.4-1.21.10", online: true },
             { name: "VayLand", ip: "mc.vayland.net", port: 25565, version: "1.12.2-1.21.11", online: true },
             { name: "VardenDrop", ip: "VardenDrop.aternos.me", port: 11734, version: "1.21.11", online: false },
             { name: "Beehive", ip: "mc.beehiveprv.club", port: 25565, version: "1.16.1-1.21.11", online: true },
-            { name: "HoneyLand", ip: "play.honeyland.fun", port: 25565, version: "1.1-26.1.2", online: true },
+            { name: "HoneyLand", ip: "play.honeyland.fun", port: 25565, version: "1.1-26.2", online: true },
             { name: "Envion", ip: "mc.envion.fun", port: 25565, version: "1.21.11", online: true },
-            { name: "Matix", ip: "hot.matix.gg", port: 25565, version: "1.21.6-26.1.2", online: true },
+            { name: "Matix", ip: "hot.matix.gg", port: 25565, version: "1.21.6-26.2", online: true },
             { name: "Cosmoplex", ip: "cosmoplex.ru", port: 25565, version: "1.21.8-26.2", online: true },
             { name: "GrayWorld", ip: "grayworld.pro", port: 25565, version: "1.8.8-1.21.10", online: true },
-            { name: "ShyMiners", ip: "eu.shyminers.fun", port: 25565, version: "1.21.8-1.21.11", online: true }
+            { name: "ShyMiners", ip: "eu.shyminers.fun", port: 25565, version: "1.21.8-1.21.11", online: true },
+            { name: "Hypixel [A license is required.]", ip: "mc.hypixel.net", port: 25565, version: "1.8-26.2", online: true }
         ];
 
         function populateVersionFilter() {
